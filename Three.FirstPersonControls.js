@@ -20,6 +20,11 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	this.movementSpeed = 1.0;
 	this.lookSpeed = 0.005;
 
+  this.stepUp = 1;
+  this.stepInt = 2;
+  this.stepHeight = 5;
+  this.currentStepInt = this.stepInt;
+  
 	this.noFly = false;
 	this.lookVertical = true;
 	this.autoForward = false;
@@ -201,13 +206,27 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 			} else {
 
-				this.autoSpeedFactor = 0.0;
+				this.autoSpeedFactor = 10.0;
 
 			}
 
 			actualMoveSpeed = delta * this.movementSpeed;
 
 			if ( this.moveForward || ( this.autoForward && !this.moveBackward ) ) {
+        if (this.stepUp === 1) {
+          this.object.translateY(this.currentStepInt);
+        }
+        
+        if (this.stepUp === -1) {
+          this.object.translateY(-this.currentStepInt);
+        }
+        
+        this.currentStepInt--;
+        
+        if (this.currentStepInt === 0) {
+          this.stepUp = -1 * this.stepUp;
+          this.currentStepInt = this.stepInt;
+        }
 				this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
 				if (checkWallCollision(this.object.position)) {
 					this.object.translateZ( actualMoveSpeed + this.autoSpeedFactor );
@@ -218,6 +237,20 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 				if (checkWallCollision(this.object.position)) {
 					this.object.translateZ( - actualMoveSpeed );
 				}
+        if (this.stepUp === 1) {
+          this.object.translateY(this.currentStepInt);
+        }
+        
+        if (this.stepUp === -1) {
+          this.object.translateY(-this.currentStepInt);
+        }
+        
+        this.currentStepInt--;
+        
+        if (this.currentStepInt === 0) {
+          this.stepUp = -1 * this.stepUp;
+          this.currentStepInt = this.stepInt;
+        }
 			}
 
 			if ( this.moveLeft ) {
@@ -280,7 +313,7 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 		}
 
-    console.log(this.rotateFactor);
+    //console.log(this.rotateFactor);
 		this.lon += this.rotateFactor * actualLookSpeed;
 		if( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
 
