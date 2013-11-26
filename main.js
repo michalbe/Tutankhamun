@@ -5,16 +5,16 @@
  */
 
 var map = [ // 1  2  3  4  5  6  7  8  9
-           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,], // 0
-           [1, 1, 0, 0, 0, 0, 0, 1, 1, 1,], // 1
-           [1, 1, 0, 0, 2, 0, 0, 0, 0, 1,], // 2
-           [1, 0, 0, 0, 0, 2, 0, 0, 0, 1,], // 3
-           [1, 0, 0, 2, 0, 0, 2, 0, 0, 1,], // 4
-           [1, 0, 0, 0, 2, 0, 0, 0, 1, 1,], // 5
-           [1, 1, 1, 0, 0, 0, 0, 1, 1, 1,], // 6
-           [1, 1, 1, 0, 0, 1, 0, 0, 1, 1,], // 7
-           [1, 1, 1, 1, 1, 1, 0, 0, 1, 1,], // 8
-           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,], // 9
+           [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1,], // 0
+           [1, 1, 0, 0, 0, 0, 0, 1, 1,  1, 1, 1,], // 1
+           [1, 1, 0, 0, 2, 0, 0, 0, 0,  0, 0, 1,], // 2
+           [1, 0, 0, 0, 0, 2, 0, 0, 0,  0, 0, 1,], // 3
+           [1, 0, 0, 2, 0, 0, 2, 0, 0,  0, 0, 1,], // 4
+           [1, 0, 0, 0, 2, 0, 0, 0, 1,  0, 1, 1,], // 5
+           [1, 1, 1, 0, 0, 0, 0, 1, 1,  1, 1, 1,], // 6
+           [1, 1, 1, 0, 0, 1, 0, 0, 1,  0, 1, 1,], // 7
+           [1, 1, 1, 1, 1, 1, 0, 0, 1,  0, 1, 1,], // 8
+           [1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1,], // 9
            ], mapW = map.length, mapH = map[0].length;
 
 // Semi-constants
@@ -39,7 +39,8 @@ var finder = new PF.AStarFinder({ // Defaults to Manhattan heuristic
 */
 
 // Initialize and run on document ready
-$(document).ready(function() {
+//$(document).ready(function() {
+window.onload = function() { 
 	//$('body').append('<div id="intro">Click to start</div>');
 	//$('#intro').css({width: WIDTH, height: HEIGHT}).one('click', function(e) {
 	//	e.preventDefault();
@@ -57,14 +58,14 @@ $(document).ready(function() {
 		scene.add(model);
 	});
 	*/
-});
+}//);
 
 // Setup
 function init() {
 	clock = new t.Clock(); // Used in render() for controls.update()
 	projector = new t.Projector(); // Used in bullet projection
 	scene = new t.Scene(); // Holds all objects in the canvas
-	scene.fog = new t.FogExp2(0xD6F1FF, 0.0005); // color, density
+	scene.fog = new t.FogExp2(0xD6F1FF, 0.002); // color, density
 	
 	// Set up camera
 	cam = new t.PerspectiveCamera(60, ASPECT, 1, 10000); // FOV, aspect, near, far
@@ -99,7 +100,7 @@ function init() {
 	$(document).click(function(e) {
 		e.preventDefault;
 		if (e.which === 1) { // Left click only
-			createBullet();
+			//createBullet();
 		}
 	});
 	
@@ -277,11 +278,10 @@ function render() {
 
 // Set up the objects in the world
 function setupScene() {
-	var UNITSIZE = 250, units = mapW;
-
+	var UNITSIZE = 250;
 	// Geometry: floor
 	var floor = new t.Mesh(
-			new t.CubeGeometry(units * UNITSIZE, 10, units * UNITSIZE),
+			new t.CubeGeometry(mapW * UNITSIZE, 10, mapH * UNITSIZE),
 			new t.MeshLambertMaterial({color: 0xEDCBA0,/*map: t.ImageUtils.loadTexture('images/floor-1.jpg')*/})
 	);
 	scene.add(floor);
@@ -297,9 +297,9 @@ function setupScene() {
 		for (var j = 0, m = map[i].length; j < m; j++) {
 			if (map[i][j]) {
 				var wall = new t.Mesh(cube, materials[map[i][j]-1]);
-				wall.position.x = (i - units/2) * UNITSIZE;
+				wall.position.x = (i - mapW/2) * UNITSIZE;
 				wall.position.y = WALLHEIGHT/2;
-				wall.position.z = (j - units/2) * UNITSIZE;
+				wall.position.z = (j - mapW/2) * UNITSIZE;
 				scene.add(wall);
 			}
 		}
@@ -500,27 +500,19 @@ function onDocumentMouseMove(e) {
 }
 
 // Handle window resizing
-$(window).resize(function() {
-	WIDTH = window.innerWidth;
-	HEIGHT = window.innerHeight;
-	ASPECT = WIDTH / HEIGHT;
-	if (cam) {
-		cam.aspect = ASPECT;
-		cam.updateProjectionMatrix();
-	} 
-	if (renderer) {
-		renderer.setSize(WIDTH, HEIGHT);
-	}
-	$('#intro, #hurt').css({width: WIDTH, height: HEIGHT,});
-});
-
-// Stop moving around when the window is unfocused (keeps my sanity!)
-$(window).focus(function() {
-	if (controls) controls.freeze = false;
-});
-$(window).blur(function() {
-	if (controls) controls.freeze = true;
-});
+// $(window).resize(function() {
+//   WIDTH = window.innerWidth;
+//   HEIGHT = window.innerHeight;
+//   ASPECT = WIDTH / HEIGHT;
+//   if (cam) {
+//     cam.aspect = ASPECT;
+//     cam.updateProjectionMatrix();
+//   } 
+//   if (renderer) {
+//     renderer.setSize(WIDTH, HEIGHT);
+//   }
+//   $('#intro, #hurt').css({width: WIDTH, height: HEIGHT,});
+// });
 
 //Get a random integer between lo and hi, inclusive.
 //Assumes lo and hi are integers and lo is lower than hi.
