@@ -26,7 +26,7 @@ var WIDTH = window.innerWidth,
 	MOVESPEED = 100,
 	LOOKSPEED = 0.075,
 	BULLETMOVESPEED = MOVESPEED * 5,
-	NUMAI = 5,
+	NUMAI = 50,
 	PROJECTILEDAMAGE = 20;
 // Global vars
 var t = THREE, scene, cam, renderer, controls, clock, projector, model, skin;
@@ -105,13 +105,13 @@ function init() {
 	});
 	
 	// Display HUD
-	$('body').append('<canvas id="radar" width="200" height="200"></canvas>');
+	$('body').append('<canvas id="radar" width="" height="200"></canvas>');
 	$('body').append('<div id="hud"><p>Health: <span id="health">100</span><br />Score: <span id="score">0</span></p></div>');
-	$('body').append('<div id="credits"><p>Created by <a href="http://www.isaacsukin.com/">Isaac Sukin</a> using <a href="http://mrdoob.github.com/three.js/">Three.js</a><br />WASD to move, mouse to look, click to shoot</p></div>');
+  // $('body').append('<div id="credits"><p>Created by <a href="http://www.isaacsukin.com/">Isaac Sukin</a> using <a href="http://mrdoob.github.com/three.js/">Three.js</a><br />WASD to move, mouse to look, click to shoot</p></div>');
 	
 	// Set up "hurt" flash
-	$('body').append('<div id="hurt"></div>');
-	$('#hurt').css({width: WIDTH, height: HEIGHT,});
+  // $('body').append('<div id="hurt"></div>');
+  // $('#hurt').css({width: WIDTH, height: HEIGHT,});
 }
 
 // Helper function for browser frames
@@ -195,8 +195,22 @@ function render() {
 	}
 	
 	// Update AI.
-	for (var i = ai.length-1; i >= 0; i--) {
+	for (var i = 0, j=ai.length; i < j; i++) {
 		var a = ai[i];
+    a.rotation.y += a.rotationFactor;
+    
+    a.scale.x = a.scale.y = a.scale.z += a.currentScale/10;
+    if (a.currentScale === a.maxscale) {
+      //currentScale = 0;
+      a.scaleStep = a.scaleStep * -1;
+      a.maxscale = a.maxscale * -1;
+      //console.log('here!')
+      a.currentScale += a.scaleStep;
+    } else {
+      a.currentScale += a.scaleStep;
+      //console.log(currentScale);
+    }
+    
 		if (a.health <= 0) {
 			ai.splice(i, 1);
 			scene.remove(a);
@@ -348,6 +362,11 @@ function addAI() {
 	o.lastRandomX = Math.random();
 	o.lastRandomZ = Math.random();
 	o.lastShot = Date.now(); // Higher-fidelity timers aren't a big deal here.
+  
+  o.maxscale = 0.5;
+  o.currentScale = getRandBetween(0, 5)/10;
+  o.scaleStep = 0.1;
+  o.rotationFactor = getRandBetween(0, 4)/100;
 	ai.push(o);
 	scene.add(o);
 }
