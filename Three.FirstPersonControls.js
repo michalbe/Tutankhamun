@@ -46,6 +46,9 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 	this.phi = 0;
 	this.theta = 0;
 
+  this.rotateFactor = 0;
+  this.rotateSpeed = 500;
+  
 	this.moveForward = false;
 	this.moveBackward = false;
 	this.moveLeft = false;
@@ -137,13 +140,15 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 			case 87: /*W*/ this.moveForward = true; break;
 
 			case 37: /*left*/
-			case 65: /*A*/ this.moveLeft = true; break;
+			case 65: /*A*/ this.rotateFactor = -this.rotateSpeed; break
+        //this.moveLeft = true; break;
 
 			case 40: /*down*/
 			case 83: /*S*/ this.moveBackward = true; break;
 
 			case 39: /*right*/
-			case 68: /*D*/ this.moveRight = true; break;
+      case 68: /*D*/ this.rotateFactor = this.rotateSpeed; break
+        //this.moveRight = true; break;
 
 			case 82: /*R*/ this.moveUp = true; break;
 			case 70: /*F*/ this.moveDown = true; break;
@@ -162,13 +167,14 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 			case 87: /*W*/ this.moveForward = false; break;
 
 			case 37: /*left*/
-			case 65: /*A*/ this.moveLeft = false; break;
+      case 65: /*A*/ this.rotateFactor = 0; break
+        //this.moveLeft = false; break;
 
 			case 40: /*down*/
 			case 83: /*S*/ this.moveBackward = false; break;
 
 			case 39: /*right*/
-			case 68: /*D*/ this.moveRight = false; break;
+			case 68: /*D*/ this.rotateFactor = 0; break//this.moveRight = false; break;
 
 			case 82: /*R*/ this.moveUp = false; break;
 			case 70: /*F*/ this.moveDown = false; break;
@@ -250,8 +256,8 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 			}
 
-			this.lon += this.mouseX * actualLookSpeed;
-			if( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed; // * this.invertVertical?-1:1;
+			this.lon += 1 * actualLookSpeed;
+			if( this.lookVertical ) this.lat -= 1 * actualLookSpeed; // * this.invertVertical?-1:1;
 
 			this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
 			this.phi = ( 90 - this.lat ) * Math.PI / 180;
@@ -274,7 +280,8 @@ THREE.FirstPersonControls = function ( object, domElement ) {
 
 		}
 
-		this.lon += this.mouseX * actualLookSpeed;
+    console.log(this.rotateFactor);
+		this.lon += this.rotateFactor * actualLookSpeed;
 		if( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
 
 		this.lat = Math.max( - 85, Math.min( 85, this.lat ) );

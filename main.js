@@ -65,10 +65,10 @@ function init() {
 	clock = new t.Clock(); // Used in render() for controls.update()
 	projector = new t.Projector(); // Used in bullet projection
 	scene = new t.Scene(); // Holds all objects in the canvas
-	scene.fog = new t.FogExp2(0xD6F1FF, 0.002); // color, density
+	scene.fog = new t.FogExp2(0xD6F1FF, 0.0002); // color, density
 	
 	// Set up camera
-	cam = new t.PerspectiveCamera(60, ASPECT, 1, 10000); // FOV, aspect, near, far
+	cam = new t.PerspectiveCamera(45, ASPECT, 1, 10000); // FOV, aspect, near, far
 	cam.position.y = UNITSIZE * .2;
 	scene.add(cam);
 	
@@ -129,20 +129,20 @@ function render() {
 	controls.update(delta); // Move camera
 	
 	// Rotate the health cube
-	healthcube.rotation.x += 0.004
-	healthcube.rotation.y += 0.008;
+  // healthcube.rotation.x += 0.004
+  // healthcube.rotation.y += 0.008;
 	// Allow picking it up once per minute
-	if (Date.now() > lastHealthPickup + 60000) {
-		if (distance(cam.position.x, cam.position.z, healthcube.position.x, healthcube.position.z) < 15 && health != 100) {
-			health = Math.min(health + 50, 100);
-			$('#health').html(health);
-			lastHealthPickup = Date.now();
-		}
-		healthcube.material.wireframe = false;
-	}
-	else {
-		healthcube.material.wireframe = true;
-	}
+  // if (Date.now() > lastHealthPickup + 60000) {
+  //   if (distance(cam.position.x, cam.position.z, healthcube.position.x, healthcube.position.z) < 15 && health != 100) {
+  //     health = Math.min(health + 50, 100);
+  //     $('#health').html(health);
+  //     lastHealthPickup = Date.now();
+  //   }
+  //   healthcube.material.wireframe = false;
+  // }
+  // else {
+  //   healthcube.material.wireframe = true;
+  // }
 
 	// Update bullets. Walk backwards through the list so we can remove items.
 	for (var i = bullets.length-1; i >= 0; i--) {
@@ -205,25 +205,25 @@ function render() {
 			addAI();
 		}
 		// Move AI
-		var r = Math.random();
-		if (r > 0.995) {
-			a.lastRandomX = Math.random() * 2 - 1;
-			a.lastRandomZ = Math.random() * 2 - 1;
-		}
-		a.translateX(aispeed * a.lastRandomX);
-		a.translateZ(aispeed * a.lastRandomZ);
-		var c = getMapSector(a.position);
-		if (c.x < 0 || c.x >= mapW || c.y < 0 || c.y >= mapH || checkWallCollision(a.position)) {
-			a.translateX(-2 * aispeed * a.lastRandomX);
-			a.translateZ(-2 * aispeed * a.lastRandomZ);
-			a.lastRandomX = Math.random() * 2 - 1;
-			a.lastRandomZ = Math.random() * 2 - 1;
-		}
-		if (c.x < -1 || c.x > mapW || c.z < -1 || c.z > mapH) {
-			ai.splice(i, 1);
-			scene.remove(a);
-			addAI();
-		}
+    // var r = Math.random();
+    // if (r > 0.995) {
+    //   a.lastRandomX = Math.random() * 2 - 1;
+    //   a.lastRandomZ = Math.random() * 2 - 1;
+    // }
+    // a.translateX(aispeed * a.lastRandomX);
+    // a.translateZ(aispeed * a.lastRandomZ);
+    // var c = getMapSector(a.position);
+    // if (c.x < 0 || c.x >= mapW || c.y < 0 || c.y >= mapH || checkWallCollision(a.position)) {
+    //   a.translateX(-2 * aispeed * a.lastRandomX);
+    //   a.translateZ(-2 * aispeed * a.lastRandomZ);
+    //   a.lastRandomX = Math.random() * 2 - 1;
+    //   a.lastRandomZ = Math.random() * 2 - 1;
+    // }
+    // if (c.x < -1 || c.x > mapW || c.z < -1 || c.z > mapH) {
+    //   ai.splice(i, 1);
+    //   scene.remove(a);
+    //   addAI();
+    // }
 		/*
 		var c = getMapSector(a.position);
 		if (a.pathPos == a.path.length-1) {
@@ -240,40 +240,41 @@ function render() {
 			a.PathPos++;
 		}
 		*/
-		var cc = getMapSector(cam.position);
-		if (Date.now() > a.lastShot + 750 && distance(c.x, c.z, cc.x, cc.z) < 2) {
-			createBullet(a);
-			a.lastShot = Date.now();
-		}
+    // ai shot
+    // var cc = getMapSector(cam.position);
+    // if (Date.now() > a.lastShot + 750 && distance(c.x, c.z, cc.x, cc.z) < 2) {
+    //   createBullet(a);
+    //   a.lastShot = Date.now();
+    // }
 	}
 
 	renderer.render(scene, cam); // Repaint
 	
 	// Death
-	if (health <= 0) {
-		runAnim = false;
-		$(renderer.domElement).fadeOut();
-		$('#radar, #hud, #credits').fadeOut();
-		$('#intro').fadeIn();
-		$('#intro').html('Ouch! Click to restart...');
-		$('#intro').one('click', function() {
-			location = location;
-			/*
-			$(renderer.domElement).fadeIn();
-			$('#radar, #hud, #credits').fadeIn();
-			$(this).fadeOut();
-			runAnim = true;
-			animate();
-			health = 100;
-			$('#health').html(health);
-			kills--;
-			if (kills <= 0) kills = 0;
-			$('#score').html(kills * 100);
-			cam.translateX(-cam.position.x);
-			cam.translateZ(-cam.position.z);
-			*/
-		});
-	}
+	// if (health <= 0) {
+//     runAnim = false;
+//     $(renderer.domElement).fadeOut();
+//     $('#radar, #hud, #credits').fadeOut();
+//     $('#intro').fadeIn();
+//     $('#intro').html('Ouch! Click to restart...');
+//     $('#intro').one('click', function() {
+//       location = location;
+//       /*
+//       $(renderer.domElement).fadeIn();
+//       $('#radar, #hud, #credits').fadeIn();
+//       $(this).fadeOut();
+//       runAnim = true;
+//       animate();
+//       health = 100;
+//       $('#health').html(health);
+//       kills--;
+//       if (kills <= 0) kills = 0;
+//       $('#score').html(kills * 100);
+//       cam.translateX(-cam.position.x);
+//       cam.translateZ(-cam.position.z);
+//       */
+//     });
+//   }
 }
 
 // Set up the objects in the world
@@ -314,10 +315,10 @@ function setupScene() {
 	scene.add(healthcube);
 	
 	// Lighting
-	var directionalLight1 = new t.DirectionalLight( 0xF7EFBE, 0.7 );
+	var directionalLight1 = new t.DirectionalLight( 0xFFFFFF, 0.7 );
 	directionalLight1.position.set( 0.5, 1, 0.5 );
 	scene.add( directionalLight1 );
-	var directionalLight2 = new t.DirectionalLight( 0xF7EFBE, 0.5 );
+	var directionalLight2 = new t.DirectionalLight( 0xFFFF00, 1 );
 	directionalLight2.position.set( -0.5, -1, -0.5 );
 	scene.add( directionalLight2 );
 }
@@ -332,7 +333,7 @@ function setupAI() {
 
 function addAI() {
 	var c = getMapSector(cam.position);
-	var aiMaterial = new t.MeshBasicMaterial({/*color: 0xEE3333,*/map: t.ImageUtils.loadTexture('images/face.png')});
+	var aiMaterial = new t.MeshBasicMaterial({/*color: 0xEE3333,*/map: t.ImageUtils.loadTexture('images/box.jpg')});
 	var o = new t.Mesh(aiGeo, aiMaterial);
 	do {
 		var x = getRandBetween(0, mapW-1);
@@ -495,7 +496,7 @@ function loadImage(path) {
 
 function onDocumentMouseMove(e) {
 	e.preventDefault();
-	mouse.x = (e.clientX / WIDTH) * 2 - 1;
+  mouse.x = (e.clientX / WIDTH) * 2 - 1;
 	mouse.y = - (e.clientY / HEIGHT) * 2 + 1;
 }
 
