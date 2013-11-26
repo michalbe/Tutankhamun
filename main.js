@@ -507,7 +507,7 @@ $(window).resize(function() {
 	if (cam) {
 		cam.aspect = ASPECT;
 		cam.updateProjectionMatrix();
-	}
+	} 
 	if (renderer) {
 		renderer.setSize(WIDTH, HEIGHT);
 	}
