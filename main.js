@@ -22,7 +22,7 @@ var WIDTH = window.innerWidth,
 	HEIGHT = window.innerHeight,
 	ASPECT = WIDTH / HEIGHT,
 	UNITSIZE = 250,
-	WALLHEIGHT = UNITSIZE / 3,
+	WALLHEIGHT = UNITSIZE,
 	MOVESPEED = 100,
 	LOOKSPEED = 0.075,
 	BULLETMOVESPEED = MOVESPEED * 5,
@@ -40,14 +40,14 @@ var finder = new PF.AStarFinder({ // Defaults to Manhattan heuristic
 
 // Initialize and run on document ready
 $(document).ready(function() {
-	$('body').append('<div id="intro">Click to start</div>');
-	$('#intro').css({width: WIDTH, height: HEIGHT}).one('click', function(e) {
-		e.preventDefault();
-		$(this).fadeOut();
+	//$('body').append('<div id="intro">Click to start</div>');
+	//$('#intro').css({width: WIDTH, height: HEIGHT}).one('click', function(e) {
+	//	e.preventDefault();
+	//	$(this).fadeOut();
 		init();
 		setInterval(drawRadar, 1000);
 		animate();
-	});
+    //});
 	/*
 	new t.ColladaLoader().load('models/Yoshi/Yoshi.dae', function(collada) {
 		model = collada.scene;
